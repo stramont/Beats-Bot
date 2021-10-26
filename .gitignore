@@ -1,0 +1,4 @@
+# Ignore all .musicxml files, or ones of the like
+*.musicxml
+*.mxml
+*.xml
