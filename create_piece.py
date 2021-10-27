@@ -1,4 +1,4 @@
-from pymusicxml import *
+from pymusicxml import Note, Measure, Score, Part
 from random import choice, randint
 
 
@@ -47,9 +47,9 @@ def createPiece():
 # Function that returns appropriate beat length
 def getBeat(beatsLeft) :
     if (beatsLeft >= 4):
-        beat_random_value = beat_length[randint(0,3)]
-    elif (beatsLeft >= 2):
         beat_random_value = beat_length[randint(0,2)]
+    elif (beatsLeft >= 2):
+        beat_random_value = beat_length[randint(0,1)]
     else:
         beat_random_value = beat_length[0]
 
