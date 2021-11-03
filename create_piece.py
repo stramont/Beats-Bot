@@ -1,15 +1,7 @@
 from pymusicxml import Note, Measure, Score, Part
 from random import choice, randint
 
-
-"""
-getNote(beatsLeft, getPitch())
-
-beatsLeft -= returnedLength
-"""
-
-
-
+import numpy as np
 
 pitch_bank = ["a", "b", "c", "d", "e", "f", "g"] # length is 7
 accent_bank = ["","#","b"]
@@ -20,7 +12,9 @@ MEASURES = 16
 
 beatLeft = 4.0
 
-def createPiece():
+def createPiece(genome):
+
+    ruleDict = parseGenome(genome) # Creates the rule dictionary
 
     score = Score(title="Algorithmically Generated RANDOM MusicXML", composer="HTMLvis")
     part = Part("Piano")
@@ -44,6 +38,24 @@ def createPiece():
     score.export_to_file("AlgorithmicExample.musicxml")
 
 
+# Parses out map of potential instructions
+def parseGenome(g) :
+
+    ruleDict = {}
+
+    for i in range(0, g.length, 10):
+        
+        key = int('{:d}{:d}{:d}{:d}{:d}'.format(g[i], g[i+1], g[i+2], g[i+3], g[i+4])) # Creates key from given index on array
+        value = int('{:d}{:d}{:d}{:d}{:d}'.format(g[i+5], g[i+6], g[i+7], g[i+8], g[i+9])) # Creates value from given index on array
+
+        if key in ruleDict:
+            ruleDict[key] = np.append(ruleDict[key], [value])
+        else:
+            ruleDict[key] = [value]
+
+    return ruleDict
+
+
 # Function that returns appropriate beat length
 def getBeat(beatsLeft) :
     if (beatsLeft >= 4):
@@ -59,8 +71,6 @@ def getBeat(beatsLeft) :
 # Function that returns pitch value
 def getPitch():
     return choice(pitch_bank) + "4"
-
-
 
 
 createPiece()
