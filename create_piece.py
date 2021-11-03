@@ -64,7 +64,7 @@ def parseGenome(g) :
     for i in range(0, g.length, 10):
         
         key = "{:d}{:d}{:d}{:d}{:d}".format(g[i], g[i+1], g[i+2], g[i+3], g[i+4]) # Creates key from given index on array
-        value = "".format(g[i+5], g[i+6], g[i+7], g[i+8], g[i+9]) # Creates value from given index on array
+        value = "{:d}{:d}{:d}{:d}{:d}".format(g[i+5], g[i+6], g[i+7], g[i+8], g[i+9]) # Creates value from given index on array
 
         if key in ruleDict:
             ruleDict[key] = np.append(ruleDict[key], [value])
