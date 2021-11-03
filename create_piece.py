@@ -23,8 +23,8 @@ MEASURES = 16
 
 beatLeft = 4.0
 
-def createPiece(genome):
 
+def createPiece(genome):
     ruleDict = parseGenome(genome) # Creates the rule dictionary
     #left side pred notes, right side resulting notes
 
@@ -37,21 +37,20 @@ def createPiece(genome):
         beatsLeft = 4
 
         if (i is 0): # generates first note
-            newNote, firstLength = genRandomNote(beatsLeft)
-            beatsLeft -= firstLength
-            m.append(createNote(newNote))
-            previousNote = newNote
+            newNote, newLength = genRandomNote(beatsLeft) # Generates completely random note
+            previousNote = newNote  # saves random note to select next rule
+            beatsLeft -= newLength  # updates beats left
+            m.append(createNote(newNote))   # appends note to measure
             
         while (beatsLeft > 0):
-            nextNote, newLength = getNextNote(previousNote, ruleDict)
-            if(newLength > beatsLeft) : #cuts off notes that exceed remaining beats
-                newLength = beatsLeft
-                nextNote = getPitchOfNote(nextNote) + beat_length[newLength]
+            nextNote, newLength = getNextNote(previousNote, ruleDict) # Get next note, given by ruleset or random choice
 
-                #fitNote(beatsLeft):
-                    # 
+            previousNote = nextNote # We do not care if the given note fits, we will use it to determine the next rule either way
+            
+            if(newLength > beatsLeft): #cuts off notes that exceed remaining beats
+                nextNote, newLength = fitNote(nextNote, beatsLeft)
 
-            beatsLeft -= newLength
+            beatsLeft -= newLength  # updates beats left
             
             m.append(createNote(nextNote))
 
@@ -60,7 +59,6 @@ def createPiece(genome):
 
 # Parses out map of potential instructions
 def parseGenome(g) :
-
     ruleDict = {}
 
     for i in range(0, g.length, 10):
@@ -75,23 +73,24 @@ def parseGenome(g) :
 
     return ruleDict
 
-
     
 # Function that returns a random pitch value
 def getRandomPitch():
     return pitch_bank[choice(pitch_bank)]
 
+
 # returning note string (5 bit), and beat (int)
 def genRandomNote():
-
     rA = np.random.randint(2,size=5) # creates random 5 length array
     randNote = "{:d}{:d}{:d}{:d}{:d}".format(rA[0], rA[1], rA[2], rA[3], rA[4]) # reformats array into string
 
     return randNote, getBeatOfNote(randNote)
 
+
 # Takes in string of 5 bits, and creates a note from it
 def createNote(noteStr):
     return Note(getPitchOfNote(noteStr), getBeatOfNote(noteStr))
+
 
 # Gets the 5 bit string of the next note based on the previous note
 def getNextNote(prevNote, genome) :
@@ -101,12 +100,15 @@ def getNextNote(prevNote, genome) :
         return nextNote, nextNoteLength
     else:
         return genRandomNote()
-    
 
+
+# returns pitch string from note
 def getPitchOfNote(note):
     pitch = note[:3]
     return pitch_dict[pitch]
 
+
+# returns beat int from note
 def getBeatOfNote(note):
     beat = note[3:]
     if beat is '00' or '01':
@@ -116,6 +118,23 @@ def getBeatOfNote(note):
     else:
         return 4
 
+
+# Takes note and beats left, and gives it a new note that fits within the measure
+# Returns new fitted note and length of that note
+def fitNote(note, beatsLeft):
+    newLength = None
+    lengths = ["00", "01", "10", "11"]
+    
+    if beatsLeft is 4:
+        newLength = choice(lengths)
+    elif beatsLeft is >= 2:
+        newLength = choice(lengths[:2])
+    else:
+        newLength = choice(lengths[:1])
+
+    nextNote = note[:3] + newLength
+    
+    return nextNote, newLength
 
 
 createPiece()
