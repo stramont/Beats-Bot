@@ -1,4 +1,5 @@
-#Genetic algorithm, based on Dr. Reggia's SGA.py algorithm
+#Genetic Algorithm
+#Dr. Reggia's SGA.py algorithm with very minor changes
 
 import numpy as np
 
@@ -31,9 +32,13 @@ class algo:
 
     #Mutate some chromosomes in population
     def mutate(self, pop):
+        #Assign a probability to every chromosome in the pop
         whereMutate = np.random.rand(np.shape(pop)[0],np.shape(pop)[1])
+        #if the probability is less than pm, save its location
         whereMutate = np.where(whereMutate < self.pm)
-        print(pop)
+
+        #For each element in pop that satisfies the above condition,
+        #mutate it (1 - chromosome)
         pop[whereMutate] = 1 - pop[whereMutate]
         return pop #returns population with mutations
 
@@ -50,4 +55,11 @@ class algo:
         for gen in range(self.nGens):
             print("loop")
         fid.write("\nfinal population, fitnesses: (up to 1st 100 chromosomes)\n")
+        fitness = self.fitFcn(self.pop) #compute final pop fitness
+        self.bestfit = fitness.max() #fitness of first most fit chromosome
+        self.bestloc = np.where(fitness == self.bestfit)[0][0] #most fit chromosome locn
+        self.bestchrome = self.pop[self.bestloc,:] #most fit chromosome
+        for c in range(min(100, self.popSize)): #for each of first 100 chromosomes
+           fid.write("  {}  {}\n".format(self.pop[c,:],fitness[c])) 
+        fid.write("Best:\n  {} at locn {}, fitness: {}\n\n".format(self.bestchrome,self.bestloc,self.bestfit))
         fid.close()
