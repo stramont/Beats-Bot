@@ -1,5 +1,10 @@
 #Genetic Algorithm
 #Dr. Reggia's SGA.py algorithm with very minor changes
+#Changes include:
+#   adding fitness proportion selection
+#   adding elitism
+#   modifying tournament to allow any given tourney size, not just 2
+#   No 2D ant maze simulation
 
 import numpy as np
 
@@ -152,14 +157,25 @@ class algo:
 
         fit_list = np.array(fit_list)
 
-        for _ in range(num_of_top):
-            bf_index = fit_list.argmax()
-            index_list.append(bf_index)
-
+        #Use np.argsort to get the the indices each fitness value would be in
+        #when sorted. This is useful because these correspond to the
+        #chromosomes the fitnesses came from, so we can 
+        sort_indices = np.argsort(fit_list)
+        
+        for i in range(num_of_top):
+            #Get the index of the maximum value.
+            #Given the maximum value will be the index for the fitness to be sorted
+            #at the very end, this will also be the index of the chromosome with the
+            #best fitness
+            index = sort_indices.argmax()
+            index_list.append(index)
+            sort_indices = list(sort_indices) #Must convert to a list to delete from it
+            sort_indices.remove(index)
+            sort_indices = np.array(sort_indices) #Back to numpy array to use argmax()
 
         return index_list
 
-    def run_algo(self,elite_size=0,tournament=True,tourney_size=2): #run the algorithm
+    def run_algo(self,elite_size=2,tournament=True,tourney_size=2): #run the algorithm
         fid = self.fid #output file
         
         for gen in range(self.nGens):
@@ -186,7 +202,7 @@ class algo:
 
             #Elitism: Select the top fitness chromosomes for the next gen
             top_chrome = self.elitism(self.pop, elite_size)
-            pop_index=self.popSize-elite_size
+            pop_index = self.popSize-elite_size
             for index in top_chrome:
                 newPop[pop_index,:] = self.pop[index]
                 pop_index+=1
