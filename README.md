@@ -2,14 +2,14 @@
 CMSC421 group project
 
 ## Current Ruleset mapping
-000 - A
-001 - B
-010 - C
-011 - D
-100 - E
-101 - F
-110 - G
-111 - A ov8
+000 - c4
+001 - d4
+010 - e4
+011 - f4
+100 - g4
+101 - a4
+110 - b4
+111 - c5
 
 00 - Quarter
 01 - Quarter
