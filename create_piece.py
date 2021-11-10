@@ -12,9 +12,10 @@ pitch_dict = {
     '011': 'D4',
     '100': 'E4',
     '101': 'F4',
-    '101': 'G4',
-    '111': 'A5'
+    '110': 'G4',
+    '111': 'A3'
 }
+
 accent_bank = ["","#","b"]
 
 beat_length = ['00', '01', '10', '11'] # eight note, quarter note, half note, whole note
@@ -22,6 +23,8 @@ beat_length = ['00', '01', '10', '11'] # eight note, quarter note, half note, wh
 MEASURES = 16
 
 beatLeft = 4.0
+
+ruleDict = {}
 
 
 def createPiece(genome):
@@ -36,14 +39,17 @@ def createPiece(genome):
         m = Measure(time_signature=(4, 4) if i == 0 else None)
         beatsLeft = 4
 
-        if (i is 0): # generates first note
-            newNote, newLength = genRandomNote(beatsLeft) # Generates completely random note
+        if (i == 0): # generates first note
+            newNote, newLength = genRandomNote() # Generates completely random note
             previousNote = newNote  # saves random note to select next rule
             beatsLeft -= newLength  # updates beats left
+
+            print(pitch_dict[newNote[:3]] + ", " + getBeatRule(newNote))
+
             m.append(createNote(newNote))   # appends note to measure
             
         while (beatsLeft > 0):
-            nextNote, newLength = getNextNote(previousNote, ruleDict) # Get next note, given by ruleset or random choice
+            nextNote, newLength = getNextNote(previousNote) # Get next note, given by ruleset or random choice
 
             previousNote = nextNote # We do not care if the given note fits, we will use it to determine the next rule either way
             
@@ -52,26 +58,31 @@ def createPiece(genome):
 
             beatsLeft -= newLength  # updates beats left
             
+            print(pitch_dict[nextNote[:3]] + ", " + getBeatRule(nextNote))
+
             m.append(createNote(nextNote))
+        measures.append(m)
 
     return measures  
 
 
 # Parses out map of potential instructions
 def parseGenome(g) :
-    ruleDict = {}
-
-    for i in range(0, g.length, 10):
+    dict = {}
+    for i in range(0, g.size, 10):
         
         key = "{:d}{:d}{:d}{:d}{:d}".format(g[i], g[i+1], g[i+2], g[i+3], g[i+4]) # Creates key from given index on array
         value = "{:d}{:d}{:d}{:d}{:d}".format(g[i+5], g[i+6], g[i+7], g[i+8], g[i+9]) # Creates value from given index on array
 
-        if key in ruleDict:
-            ruleDict[key] = np.append(ruleDict[key], [value])
+        if key in dict:
+            dict[key] = np.append(dict[key], [value])
         else:
-            ruleDict[key] = [value]
+            dict[key] = [value]
 
-    return ruleDict
+    for rule in dict.keys():
+        printRule(rule, dict)
+
+    return dict
 
     
 # Function that returns a random pitch value
@@ -93,9 +104,9 @@ def createNote(noteStr):
 
 
 # Gets the 5 bit string of the next note based on the previous note
-def getNextNote(prevNote, genome) :
-    if prevNote in genome:
-        nextNote = choice(genome[prevNote])
+def getNextNote(prevNote) :
+    if prevNote in ruleDict:
+        nextNote = choice(ruleDict[prevNote])
         nextNoteLength = getBeatOfNote(nextNote)
         return nextNote, nextNoteLength
     else:
@@ -111,11 +122,13 @@ def getPitchOfNote(note):
 # returns beat int from note
 def getBeatOfNote(note):
     beat = note[3:]
-    if beat is '00' or '01':
+    print(beat)
+    if beat == '00' or '01':
         return 1
-    elif beat is '10':
+    elif beat == '10':
         return 2
     else:
+        print("w")
         return 4
 
 
@@ -125,20 +138,39 @@ def fitNote(note, beatsLeft):
     newLength = None
     lengths = ["00", "01", "10", "11"]
     
-    if beatsLeft is 4:
+    if beatsLeft == 4:
         newLength = choice(lengths)
-    elif beatsLeft is >= 2:
+    elif beatsLeft >= 2:
         newLength = choice(lengths[:2])
     else:
         newLength = choice(lengths[:1])
 
     nextNote = note[:3] + newLength
     
-    return nextNote, newLength
+    return nextNote, getBeatOfNote(newLength)
 
 
-createPiece()
+# Prints out the rules associated with the given note
+def printRule(note, ruleDict):
 
+    output = "Previous note of " + pitch_dict[note[:3]] + ", " + getBeatRule(note) + " can be: "
+
+    for rule in ruleDict[note]:
+        output += pitch_dict[rule[:3]] + ", " + getBeatRule(rule) + " "
+    
+    print(output)
+
+
+# Gets the beat associated with the given note, in plain text
+def getBeatRule(note):
+    noteVal = note[3:]
+
+    if noteVal == "00" or noteVal == "01":
+        return "quarter note"
+    elif noteVal == "10":
+        return "half note"
+    else:
+        return "whole note"
 
 
 # parseGenome(g) -> g is a 320 bit array
