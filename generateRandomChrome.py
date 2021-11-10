@@ -20,4 +20,3 @@ For a full chromosome, it should be 320 bits (10 bit per rule, 32 rules). """
     length = rule_size * num_rules
     chrome = np.random.randint(2,size=length)
     return chrome
-    
