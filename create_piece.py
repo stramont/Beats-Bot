@@ -6,14 +6,14 @@ import numpy as np
  # key: A, B, C, D, E, F, G, A'
 pitch_bank = ['000', '001', '010', '011', '100', '101', '101', '111'] # length is 8
 pitch_dict = {
-    '000': 'A4', 
-    '001': 'B4',
-    '010': 'C4', 
-    '011': 'D4',
-    '100': 'E4',
-    '101': 'F4',
-    '110': 'G4',
-    '111': 'A3'
+    '000': 'c4', 
+    '001': 'd4',
+    '010': 'e4', 
+    '011': 'f4',
+    '100': 'g4',
+    '101': 'a4',
+    '110': 'b4',
+    '111': 'c5'
 }
 
 accent_bank = ["","#","b"]
@@ -100,6 +100,7 @@ def genRandomNote():
 
 # Takes in string of 5 bits, and creates a note from it
 def createNote(noteStr):
+    print(getBeatOfNote(noteStr))
     return Note(getPitchOfNote(noteStr), getBeatOfNote(noteStr))
 
 
@@ -122,8 +123,7 @@ def getPitchOfNote(note):
 # returns beat int from note
 def getBeatOfNote(note):
     beat = note[3:]
-    print(beat)
-    if beat == '00' or '01':
+    if beat == '00' or beat == '01':
         return 1
     elif beat == '10':
         return 2
@@ -147,7 +147,7 @@ def fitNote(note, beatsLeft):
 
     nextNote = note[:3] + newLength
     
-    return nextNote, getBeatOfNote(newLength)
+    return nextNote, getBeatOfNote(nextNote)
 
 
 # Prints out the rules associated with the given note
