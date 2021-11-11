@@ -127,13 +127,15 @@ class algo:
         #Find the best of the best of the population
         pop_prob = []
         pop_fit = []
+        pop_indices = []
 
         #Get the fitness for every chromosome
         #NOTE: for this and the probability list pop_prob, the index
         #of the chromosome in pop corresponds to the index in these
         #two lists.
-        for chrome in pop:
+        for i, chrome in enumerate(pop):
             pop_fit.append(self.fitness_of_chrome(chrome))
+            pop_indices.append(i)
 
         fit_array = np.array(pop_fit) #Make sure it's a numpy array
         fit_sum = fit_array.sum() #Get the sum of the fitness values
@@ -143,7 +145,7 @@ class algo:
             pop_prob.append(fitness / fit_sum)
 
         #Randomly choose a chromosome based on their given probabilities
-        best_index = np.random.choice(pop, 1, pop_prob)
+        best_index = np.random.choice(pop_indices, 1, pop_prob)
         
         #Return the randomly chosen best fit chromosome
         return best_index
@@ -167,10 +169,9 @@ class algo:
             #Given the maximum value will be the index for the fitness to be sorted
             #at the very end, this will also be the index of the chromosome with the
             #best fitness
-            index = sort_indices.argmax()
-            index_list.append(index)
             sort_indices = list(sort_indices) #Must convert to a list to delete from it
-            sort_indices.remove(index)
+            index = sort_indices.pop() #Get the last index
+            index_list.append(index)
             sort_indices = np.array(sort_indices) #Back to numpy array to use argmax()
 
         return index_list
