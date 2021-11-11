@@ -76,8 +76,11 @@ class algo:
     def tournament(self, pop, tourney_size=2):
         #Conduct a tournament to select offspring of population
 
+        #Hold the indices for the candidate chromosomes
         cand_list1 = []
         cand_list2 = []
+
+        #Hold the fitness for the corresponding candidates in cand_list#
         cand_fit1 = []
         cand_fit2 = []
         popsize = len(pop)
@@ -93,13 +96,17 @@ class algo:
             else:
                 cand_list1.append(cand_index)
                 curr_cands += 1
-        
+
         #Compare fitnesses of all the candidates and pick the most fit
         for ci in cand_list1:
             cand_fit1.append(self.fitness_of_chrome(pop[ci]))
 
-        cl_array = np.array(cand_list1)
-        par1_index = cl_array.argmax() #Get the indices of the maximum fitness
+        #Get the maximum fitness from the fitness list and return its
+        #index in cand_list1. Therefore, cand_list1[par1_index] gives the
+        #index of the chromosome in pop that won the tourney
+        cl_array = np.array(cand_fit1)
+        par1_index = cl_array.argmax()
+
         
         #After choosing the first parent, choose the second
         curr_cands = 0
@@ -116,12 +123,16 @@ class algo:
         for ci in cand_list2:
             cand_fit2.append(self.fitness_of_chrome(pop[ci]))
 
-        cl_array = np.array(cand_list2)
+
+        #Get the maximum fitness from the fitness list and return its
+        #index in cand_list2. Therefore, cand_list2[par2_index] gives the
+        #index of the chromosome in pop that won the tourney
+        cl_array = np.array(cand_fit2)
         par2_index = cl_array.argmax()
         
 
-        #Return the parent indices or the parent chromosomes themselves?
-        return par1_index, par2_index
+        #Return the indices of the parent
+        return cand_list1[par1_index], cand_list2[par2_index]
 
     def fitpselect(self, pop):
         #Find the best of the best of the population
