@@ -169,10 +169,9 @@ class algo:
             #Given the maximum value will be the index for the fitness to be sorted
             #at the very end, this will also be the index of the chromosome with the
             #best fitness
-            index = sort_indices.argmax()
-            index_list.append(index)
             sort_indices = list(sort_indices) #Must convert to a list to delete from it
-            sort_indices.remove(index)
+            index = sort_indices.pop() #Get the last index
+            index_list.append(index)
             sort_indices = np.array(sort_indices) #Back to numpy array to use argmax()
 
         return index_list
