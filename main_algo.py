@@ -7,6 +7,7 @@
 #   No 2D ant maze simulation
 
 import numpy as np
+from fitness import fitness
 
 class algo:
     
@@ -50,7 +51,7 @@ class algo:
         
     def fitness_of_chrome(self, chrome):
         #Compute the fitness of a single chromosome
-        return 1
+        return fitness(chrome)
 
     
     def crossover(self, child1, child2): #Single point crossover between two children/chromosomes

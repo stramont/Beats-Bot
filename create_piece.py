@@ -44,7 +44,7 @@ def createPiece(genome):
             previousNote = newNote  # saves random note to select next rule
             beatsLeft -= newLength  # updates beats left
 
-            print(pitch_dict[newNote[:3]] + ", " + getBeatRule(newNote))
+            #print(pitch_dict[newNote[:3]] + ", " + getBeatRule(newNote))
 
             m.append(createNote(newNote))   # appends note to measure
             
@@ -58,7 +58,7 @@ def createPiece(genome):
 
             beatsLeft -= newLength  # updates beats left
             
-            print(pitch_dict[nextNote[:3]] + ", " + getBeatRule(nextNote))
+            #print(pitch_dict[nextNote[:3]] + ", " + getBeatRule(nextNote))
 
             m.append(createNote(nextNote))
         measures.append(m)
@@ -79,8 +79,8 @@ def parseGenome(g) :
         else:
             dict[key] = [value]
 
-    for rule in dict.keys():
-        printRule(rule, dict)
+   # for rule in dict.keys():
+     #   printRule(rule, dict)
 
     return dict
 
@@ -100,7 +100,7 @@ def genRandomNote():
 
 # Takes in string of 5 bits, and creates a note from it
 def createNote(noteStr):
-    print(getBeatOfNote(noteStr))
+   # print(getBeatOfNote(noteStr))
     return Note(getPitchOfNote(noteStr), getBeatOfNote(noteStr))
 
 
@@ -128,7 +128,6 @@ def getBeatOfNote(note):
     elif beat == '10':
         return 2
     else:
-        print("w")
         return 4
 
 
