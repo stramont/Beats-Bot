@@ -7,7 +7,9 @@
 #   No 2D ant maze simulation
 
 import numpy as np
+from create_piece import createPiece
 from fitness import fitness
+from convert_notes_to_xml import convert_to_xml
 
 class algo:
     
@@ -232,6 +234,10 @@ class algo:
         self.bestfit = fitness.max() #fitness of first most fit chromosome
         self.bestloc = np.where(fitness == self.bestfit)[0][0] #most fit chromosome locn
         self.bestchrome = self.pop[self.bestloc,:] #most fit chromosome
+        #Convert best chromosome to xml
+        print(self.bestfit)
+        convert_to_xml(createPiece(self.bestchrome))
+
         for c in range(min(100, self.popSize)): #for each of first 100 chromosomes
            fid.write("  {}  {}\n".format(self.pop[c,:],fitness[c])) 
         fid.write("Best:\n  {} at locn {}, fitness: {}\n\n".format(self.bestchrome,self.bestloc,self.bestfit))
