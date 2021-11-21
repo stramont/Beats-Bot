@@ -2,4 +2,5 @@
 *.musicxml
 *.mxml
 *.xml
+*.txt
 __pycache__/
