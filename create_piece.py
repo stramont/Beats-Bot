@@ -28,6 +28,7 @@ ruleDict = {}
 
 
 def createPiece(genome):
+    global ruleDict
     ruleDict = parseGenome(genome) # Creates the rule dictionary
     #left side pred notes, right side resulting notes
 
@@ -41,6 +42,8 @@ def createPiece(genome):
 
         if (i == 0): # generates first note
             newNote, newLength = genRandomNote() # Generates completely random note
+            #newNote = "{:d}{:d}{:d}{:d}{:d}".format(genome[0], genome[1], genome[2], genome[3], genome[4])
+            #newLength = getBeatOfNote(newNote)
             previousNote = newNote  # saves random note to select next rule
             beatsLeft -= newLength  # updates beats left
 
@@ -107,7 +110,7 @@ def createNote(noteStr):
 # Gets the 5 bit string of the next note based on the previous note
 def getNextNote(prevNote) :
     if prevNote in ruleDict:
-        nextNote = choice(ruleDict[prevNote])
+        nextNote = ruleDict[prevNote][0]
         nextNoteLength = getBeatOfNote(nextNote)
         return nextNote, nextNoteLength
     else:
