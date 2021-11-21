@@ -110,7 +110,7 @@ def createNote(noteStr):
 # Gets the 5 bit string of the next note based on the previous note
 def getNextNote(prevNote) :
     if prevNote in ruleDict:
-        nextNote = ruleDict[prevNote][0]
+        nextNote = choice(ruleDict[prevNote])
         nextNoteLength = getBeatOfNote(nextNote)
         return nextNote, nextNoteLength
     else:
