@@ -15,7 +15,7 @@ HALF_QQ_WHOLE_PATTERN = True
 
 #Raises fitness if pieces ends with input key,
 #and if note is longer than a quarter note
-ENDS_IN_KEY = True, '000'
+ENDS_IN_KEY = (True, '000')
 
 #Raises fitness if there are no sudden jumps between three notes (Robert)
 #NOTE: doesn't account across measures, still todo
@@ -58,10 +58,10 @@ def fitness(c): # c = chromosome
                                     f += 1
 
     if ENDS_IN_KEY[0]:
-        l = measures[measures.len - 1].leaves()
-        if pitch_dict[ENDS_IN_KEY[1]] == l[l.len - 1]:
+        l = measures[-1].leaves()
+        if pitch_dict[ENDS_IN_KEY[1]] == l[-1][:3]:
             f+= 1
-        if l[l.len - 1].written_length >= 2.0:
+        if l[-1].written_length >= 2.0:
             f+= 1
 
 
