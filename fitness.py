@@ -5,7 +5,6 @@ from pymusicxml import Note, Measure, Score, Part
 #at the top of this file, and then enclose your rule in the conditional 
 #in the function
 
- #Raises fitness if there are more quarter notes in the first measure
 ALL_QUARTERS = True
 
 #Raises fitness if the following pattern is detected:
@@ -39,15 +38,7 @@ def fitness(c): # c = chromosome
             if n.written_length == 1.0:
                 f += 1
 
-    if HALF_QQ_WHOLE_PATTERN:
-        for i in range(len(measures)):
-            if i != len(measures) - 1:
-                l = measures[i].leaves()
-                if l[0].written_length == 2.0:
-                    if l[1].written_length == 1.0 and pitch_list.index(l[1].pitch.step) < pitch_list.index(l[0].pitch.step):
-                        if l[2].written_length == 1.0 and pitch_list.index(l[2].pitch.step) < pitch_list.index(l[1].pitch.step):
-                            if measures[i+1].leaves()[0].written_length == 4.0:
-                                f += 1
+      
 
 
 
