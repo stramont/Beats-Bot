@@ -17,6 +17,11 @@ HALF_QQ_WHOLE_PATTERN = True
 #and if note is longer than a quarter note
 ENDS_IN_KEY = True, '000'
 
+#Raises fitness if there are no sudden jumps between three notes (Robert)
+#NOTE: doesn't account across measures, still todo
+#For example c4-b4-d4
+NO_SUDDEN_JUMPS = (True, 5,)
+
 pitch_dict = {
     '000': 'c4', 
     '001': 'd4',
@@ -60,5 +65,33 @@ def fitness(c): # c = chromosome
             f+= 1
 
 
+    if NO_SUDDEN_JUMPS[0]:
+        max_gap = NO_SUDDEN_JUMPS[1] #How far we'll let the notes jump
+        for m in measures:
+            notes = m.leaves()
+            
+            pitch_index=[]
+            for note in notes:
+                index=pitch_list.index(note.pitch.step)
+                if note.pitch.step == 'C' and note.pitch.octave == 5:
+                    index=len(pitch_list)-1 #It's C5, which will be
+                pitch_index.append(index)
+                
+            if len(notes) == 3:
+                #Three notes: one must be a half note
+                gap12 = abs(pitch_index[0]-pitch_index[1])
+                gap23 = abs(pitch_index[1]-pitch_index[2])
+
+                if gap12 < max_gap or gap23 < max_gap:
+                    f += 1
+                
+            elif len(notes) == 4:
+                #All quarter notes
+                gap12 = abs(pitch_index[0]-pitch_index[1])
+                gap23 = abs(pitch_index[1]-pitch_index[2])
+                gap34 = abs(pitch_index[2]-pitch_index[3])
+                
+                if (gap12 < max_gap or gap23 < max_gap) and (gap23 < max_gap or gap34 < max_gap):
+                    f += 1
 
     return f
