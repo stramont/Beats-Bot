@@ -35,6 +35,8 @@ def createPiece(genome):
     # generate new piece
     measures = []
     previousNote = None
+
+    queryHits = queryCount = 0.0 # Variables used to calculate the percentage of rule hits
     
     for i in range(MEASURES):
         m = Measure(time_signature=(4, 4) if i == 0 else None)
@@ -52,7 +54,10 @@ def createPiece(genome):
             m.append(createNote(newNote))   # appends note to measure
             
         while (beatsLeft > 0):
-            nextNote, newLength = getNextNote(previousNote) # Get next note, given by ruleset or random choice
+            nextNote, newLength, hit = getNextNote(previousNote) # Get next note, given by ruleset or random choice
+
+            queryHits = queryHits + 1 if hit else queryHits # Adds one to the number of rule hits if a rule existed for the previous note
+            queryCount += 1 # Adds one to the count of total notes hit
 
             previousNote = nextNote # We do not care if the given note fits, we will use it to determine the next rule either way
             
@@ -66,7 +71,9 @@ def createPiece(genome):
             m.append(createNote(nextNote))
         measures.append(m)
 
-    return measures  
+    queryHitPct = queryHits / queryCount
+
+    return measures, queryHitPct
 
 
 # Parses out map of potential instructions
@@ -93,12 +100,12 @@ def getRandomPitch():
     return pitch_bank[choice(pitch_bank)]
 
 
-# returning note string (5 bit), and beat (int)
+# returning note string (5 bit), and beat (int), plus False as it does not generate a rule from the rule book
 def genRandomNote():
     rA = np.random.randint(2,size=5) # creates random 5 length array
     randNote = "{:d}{:d}{:d}{:d}{:d}".format(rA[0], rA[1], rA[2], rA[3], rA[4]) # reformats array into string
 
-    return randNote, getBeatOfNote(randNote)
+    return randNote, getBeatOfNote(randNote), False
 
 
 # Takes in string of 5 bits, and creates a note from it
@@ -107,12 +114,12 @@ def createNote(noteStr):
     return Note(getPitchOfNote(noteStr), getBeatOfNote(noteStr))
 
 
-# Gets the 5 bit string of the next note based on the previous note
+# Gets the 5 bit string of the next note based on the previous note, plus a Boolean value if it uses a rule from the chrome
 def getNextNote(prevNote) :
     if prevNote in ruleDict:
         nextNote = choice(ruleDict[prevNote])
         nextNoteLength = getBeatOfNote(nextNote)
-        return nextNote, nextNoteLength
+        return nextNote, nextNoteLength, True
     else:
         return genRandomNote()
 
