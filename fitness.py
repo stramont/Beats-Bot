@@ -22,6 +22,11 @@ ENDS_IN_KEY = (True, '000')
 #For example c4-b4-d4
 NO_SUDDEN_JUMPS = (True, 5,)
 
+#Raises fitness if it detects two consectutive repeated notes (Adit)
+#However, if there are three consectutive repeated notes, the fitness is lowered
+TWO_CONSECUTIVE_NOTES = True
+
+
 pitch_dict = {
     '000': 'c4', 
     '001': 'd4',
@@ -93,5 +98,30 @@ def fitness(c): # c = chromosome
                 
                 if (gap12 < max_gap or gap23 < max_gap) and (gap23 < max_gap or gap34 < max_gap):
                     f += 1
+
+    if TWO_CONSECUTIVE_NOTES:
+        prev_pitch = None
+        prev_prev_pitch = None
+
+        for m in measures:
+            notes = m.leaves()
+            for note in notes:
+                curr_pitch = note.pitch
+                if prev_prev_pitch != None: # if we are still on the first three notes, we are going to ignore any repeats
+                    if prev_pitch == curr_pitch:
+                        if prev_prev_pitch == note:
+                            f -= 2
+                        else:
+                            f += 1
+                prev_prev_note = prev_note
+                prev_note = curr_pitch
+
+
+                    
+
+                
+
+
+            
 
     return f
