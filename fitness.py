@@ -11,7 +11,7 @@ ALL_QUARTERS = True
 #Raises fitness if the following pattern is detected:
 # Measure starts with half note, continues with 2 quarter notes, and 
 #next measure is whole note, all decreasing notes.
-HALF_QQ_WHOLE_PATTERN = False
+HALF_QQ_WHOLE_PATTERN = True
 
 #Raises fitness if pieces ends with input key,
 #and if note is longer than a quarter note
@@ -110,7 +110,7 @@ def fitness(c): # c = chromosome
                 curr_pitch = note.pitch.step
                 if prev_prev_pitch != None: # if we are still on the first three notes, we are going to ignore any repeats
                     if prev_pitch == curr_pitch:
-                        if prev_prev_pitch == note:
+                        if prev_prev_pitch == curr_pitch:
                             f -= 2
                         else:
                             f += 1
