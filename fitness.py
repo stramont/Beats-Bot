@@ -65,6 +65,7 @@ def fitness(c): # c = chromosome
     if ENDS_IN_KEY[0]:
         l = measures[-1].leaves()
         # old error: if pitch_dict[ENDS_IN_KEY[1]] == l[-1][:3]:  
+        #print((l[-1].pitch.step + str(l[-1].pitch.octave)).lower())
         if pitch_dict[ENDS_IN_KEY[1]] == (l[-1].pitch.step + str(l[-1].pitch.octave)).lower():
             f+= 1
         if l[-1].written_length >= 2.0:
