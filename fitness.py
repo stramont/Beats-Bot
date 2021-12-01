@@ -106,7 +106,7 @@ def fitness(c): # c = chromosome
         for m in measures:
             notes = m.leaves()
             for note in notes:
-                curr_pitch = note.pitch
+                curr_pitch = note.pitch.step
                 if prev_prev_pitch != None: # if we are still on the first three notes, we are going to ignore any repeats
                     if prev_pitch == curr_pitch:
                         if prev_prev_pitch == note:
