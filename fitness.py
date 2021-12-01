@@ -64,7 +64,8 @@ def fitness(c): # c = chromosome
 
     if ENDS_IN_KEY[0]:
         l = measures[-1].leaves()
-        if pitch_dict[ENDS_IN_KEY[1]] == l[-1][:3]:
+        # old error: if pitch_dict[ENDS_IN_KEY[1]] == l[-1][:3]:  
+        if pitch_dict[ENDS_IN_KEY[1]] == (l[-1].pitch.step + str(l[-1].pitch.octave)).lower():
             f+= 1
         if l[-1].written_length >= 2.0:
             f+= 1
@@ -102,6 +103,7 @@ def fitness(c): # c = chromosome
     if TWO_CONSECUTIVE_NOTES:
         prev_pitch = None
         prev_prev_pitch = None
+        prev_note = None #Added this to avoid syntax error
 
         for m in measures:
             notes = m.leaves()
