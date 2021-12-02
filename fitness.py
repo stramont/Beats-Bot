@@ -6,10 +6,10 @@ from pymusicxml import Note, Measure, Score, Part
 #at the top of this file, and then enclose your rule in the conditional 
 #in the function
 
-#Raises fitness if there are more quarter notes in the first measure
+#Raises fitness if there are more quarter notes in the first measure (Seb)
 ALL_QUARTERS = True
 
-#Raises fitness if the following pattern is detected:
+#Raises fitness if the following pattern is detected: (Seb)
 # Measure starts with half note, continues with 2 quarter notes, and 
 #next measure is whole note, all decreasing notes.
 HALF_QQ_WHOLE_PATTERN = True
@@ -31,6 +31,16 @@ HAS_EXTENDED_NOTE = True
 # Weights can be adjusted, must be converted from float
 USES_RULES = True
 
+#Raises fitness if it detects two consectutive repeated notes (Adit)
+#However, if there are three consectutive repeated notes, the fitness is lowered
+TWO_CONSECUTIVE_NOTES = True
+
+#Raises fitness if it detects a measure of all ascending or all descending notes. (Seb)
+ASC_DSC_NOTES = True
+
+#Raises fitness if song ends with a dominant cadence (5,7 or 2 to 1)
+AUTHENTIC_CADENCE = True
+
 pitch_dict = {
     '000': 'c4', 
     '001': 'd4',
@@ -41,6 +51,8 @@ pitch_dict = {
     '110': 'b4',
     '111': 'c5'
 }
+
+pitch_dict_list = ["c4", "d4", "e4", "f4", "g4", "a4", "b4", "c5"]
 
 pitch_list = ["C", "D", "E", "F", "G", "A", "B", "C"] #For ordering
 
@@ -68,7 +80,8 @@ def fitness(c): # c = chromosome
 
     if ENDS_IN_KEY[0]:
         l = measures[-1].leaves()
-        if pitch_dict[ENDS_IN_KEY[1]] == l[-1][:3]:
+        # old error: if pitch_dict[ENDS_IN_KEY[1]] == l[-1][:3]:  
+        if pitch_dict[ENDS_IN_KEY[1]] == (l[-1].pitch.step + str(l[-1].pitch.octave)).lower():
             f+= 1
         if l[-1].written_length >= 2.0:
             f+= 1
@@ -115,4 +128,77 @@ def fitness(c): # c = chromosome
     if USES_RULES:
         f += int(rulesPercentage * 20)
     
+    if TWO_CONSECUTIVE_NOTES:
+        prev_pitch = None
+        prev_prev_pitch = None
+
+        for m in measures:
+            notes = m.leaves()
+            for note in notes:
+                curr_pitch = note.pitch.step
+                if prev_prev_pitch != None: # if we are still on the first three notes, we are going to ignore any repeats
+                    if prev_pitch == curr_pitch:
+                        if prev_prev_pitch == curr_pitch:
+                            f -= 2
+                        else:
+                            f += 1
+                prev_prev_pitch = prev_pitch
+                prev_pitch = curr_pitch
+
+        
+    if ASC_DSC_NOTES:
+
+        for m in measures:
+            all_asc = True
+            all_desc = True
+            notes = m.leaves()
+            note_list = []
+
+            # Create note_list                
+            for n in notes:
+                note_list.append((n.pitch.step + str(n.pitch.octave)).lower())
+            
+            if len(note_list) > 1:
+
+                for i in range(len(note_list) - 1): #goes up to and not including last note
+
+                    #Check ascending
+                    if not (pitch_dict_list.index(note_list[i]) < pitch_dict_list.index(note_list[i+1])):
+                        all_asc = False
+
+                    #Check descendign
+                    if not (pitch_dict_list.index(note_list[i]) > pitch_dict_list.index(note_list[i+1])):
+                        all_desc = False
+
+                if all_desc or all_asc:
+                    f += 3
+
+
+
+
+                
+
+
+
+    if AUTHENTIC_CADENCE:
+        l = measures[-1].leaves()
+        length = len(l)
+        n2 = l[-1].pitch.step                           # n2 is the last note, n1 is the second to last note
+        if length == 1:                                 # if the last measure has only one note, n1 is chosen from the previous measure
+            l2 = measures[-2].leaves()
+            n1 = l2[-1].pitch.step
+        else:
+            n1 = l[-2].pitch.step
+        if n2 == "C":                                   # points are given for ending on the root note
+            f += 2
+            if n1 == "D" or n1 == "G" or n1 == "B":
+                f += 4                                  # additional points given for having an authentic cadence (moving from V (G, B, D) to I (C))
+        else:
+            f -= 2
+                
+            
+                    
+
+                  
+
     return f

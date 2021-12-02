@@ -7,6 +7,7 @@
 #   No 2D ant maze simulation
 
 import numpy as np
+import matplotlib.pyplot as pl
 from create_piece import createPiece
 from fitness import fitness
 from convert_notes_to_xml import convert_to_xml
@@ -224,6 +225,8 @@ class algo:
 
             self.pop = newPop
             fitness = self.fitFcn(self.pop)    # fitness values for population
+            self.bestfitarray[gen + 1] = self.bestfit        # save best fitness for plotting
+            self.meanfitarray[gen + 1] = fitness.mean()      # save mean fitness for plotting
             self.bestfit = fitness.max()       # fitness of (first) most fit chromosome
             self.bestloc = np.where(fitness == self.bestfit)[0][0]  # most fit chromosome locn
             self.bestchrome = self.pop[self.bestloc,:]              # most fit chromosome
@@ -235,10 +238,18 @@ class algo:
         self.bestloc = np.where(fitness == self.bestfit)[0][0] #most fit chromosome locn
         self.bestchrome = self.pop[self.bestloc,:] #most fit chromosome
         #Convert best chromosome to xml
-        print(self.bestfit)
-        convert_to_xml(createPiece(self.bestchrome))
+        print("Fitness of xml piece: {}".format(self.bestfit))
+        convert_to_xml(createPiece(self.bestchrome), "Piano", "A1", "A1")
+        convert_to_xml(createPiece(self.bestchrome), "Piano", "A2", "A2")
+        convert_to_xml(createPiece(self.bestchrome), "Piano", "A3", "A3")
+        convert_to_xml(createPiece(self.bestchrome), "Piano", "A4", "A4")
 
         for c in range(min(100, self.popSize)): #for each of first 100 chromosomes
            fid.write("  {}  {}\n".format(self.pop[c,:],fitness[c])) 
         fid.write("Best:\n  {} at locn {}, fitness: {}\n\n".format(self.bestchrome,self.bestloc,self.bestfit))
         fid.close()
+        pl.ion()      # activate interactive plotting
+        pl.xlabel("Generation")
+        pl.ylabel("Fitness of Best, Mean Chromosome")
+        pl.plot(self.bestfitarray,'kx-',self.meanfitarray,'kx--')
+        pl.savefig("plot1.png")
