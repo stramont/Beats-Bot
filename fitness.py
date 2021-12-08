@@ -1,3 +1,4 @@
+from _typeshed import HasFileno
 from create_piece import createPiece
 from pymusicxml import Note, Measure, Score, Part
 
@@ -21,6 +22,14 @@ ENDS_IN_KEY = (True, '000')
 #NOTE: doesn't account across measures, still todo
 #For example c4-b4-d4
 NO_SUDDEN_JUMPS = (True, 5,)
+
+# Raises fitness if measure has half or whole notes in it
+# Will incentivize more interesting patterns in the piece
+HAS_EXTENDED_NOTE = True
+
+# Will use hit percentage for rules from the given chromasome to add the fitness of a given piece
+# Weights can be adjusted, must be converted from float
+USES_RULES = True
 
 #Raises fitness if it detects two consectutive repeated notes (Adit)
 #However, if there are three consectutive repeated notes, the fitness is lowered
@@ -51,7 +60,7 @@ pitch_list = ["C", "D", "E", "F", "G", "A", "B", "C"] #For ordering
 
 def fitness(c): # c = chromosome
     f = 50
-    measures = createPiece(c)
+    measures, rulesPercentage = createPiece(c)
 
     # Raises fitness there are more quarter notes in the first measure
     if ALL_QUARTERS:
@@ -107,6 +116,18 @@ def fitness(c): # c = chromosome
                 if (gap12 < max_gap or gap23 < max_gap) and (gap23 < max_gap or gap34 < max_gap):
                     f += 1
 
+
+    if HAS_EXTENDED_NOTE:
+        for m in measures:
+            notes = m.leaves()
+            
+            if len(notes) < 4: # Means that measure has at least a half or whole note
+                f += 2
+
+
+    if USES_RULES:
+        f += int(rulesPercentage * 20)
+    
     if TWO_CONSECUTIVE_NOTES:
         prev_pitch = None
         prev_prev_pitch = None
@@ -178,9 +199,6 @@ def fitness(c): # c = chromosome
             
                     
 
-                
-
-
-            
+                  
 
     return f
