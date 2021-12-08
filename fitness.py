@@ -1,4 +1,3 @@
-from _typeshed import HasFileno
 from create_piece import createPiece
 from pymusicxml import Note, Measure, Score, Part
 

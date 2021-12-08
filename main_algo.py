@@ -239,10 +239,10 @@ class algo:
         self.bestchrome = self.pop[self.bestloc,:] #most fit chromosome
         #Convert best chromosome to xml
         print("Fitness of xml piece: {}".format(self.bestfit))
-        convert_to_xml(createPiece(self.bestchrome), "Piano", "A1", "A1")
-        convert_to_xml(createPiece(self.bestchrome), "Piano", "A2", "A2")
-        convert_to_xml(createPiece(self.bestchrome), "Piano", "A3", "A3")
-        convert_to_xml(createPiece(self.bestchrome), "Piano", "A4", "A4")
+        convert_to_xml(createPiece(self.bestchrome)[0], "Piano", "A1", "A1")
+        convert_to_xml(createPiece(self.bestchrome)[0], "Piano", "A2", "A2")
+        convert_to_xml(createPiece(self.bestchrome)[0], "Piano", "A3", "A3")
+        convert_to_xml(createPiece(self.bestchrome)[0], "Piano", "A4", "A4")
 
         for c in range(min(100, self.popSize)): #for each of first 100 chromosomes
            fid.write("  {}  {}\n".format(self.pop[c,:],fitness[c])) 

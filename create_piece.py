@@ -43,7 +43,7 @@ def createPiece(genome):
         beatsLeft = 4
 
         if (i == 0): # generates first note
-            newNote, newLength = genRandomNote() # Generates completely random note
+            newNote, newLength, third = genRandomNote() # Generates completely random note
             #newNote = "{:d}{:d}{:d}{:d}{:d}".format(genome[0], genome[1], genome[2], genome[3], genome[4])
             #newLength = getBeatOfNote(newNote)
             previousNote = newNote  # saves random note to select next rule
