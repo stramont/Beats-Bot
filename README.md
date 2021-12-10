@@ -5,6 +5,12 @@ CMSC421 group project
 Run with `python3 main_driver.py`.  Evolutionary algorithm parameters
 could be edited inside this file.
 
+After running, 5 files will be produced in the current directory: 4 of them are musicXML files,
+and one of them is a fitness plot graph.  (4 files are produced because of the slight variations that occur in creating the song)
+
+To listen to one of these musicXML file songs, use a program such as MuseScore: https://musescore.org/en.
+
+
 ## Current Ruleset mapping
 000 - c4
 001 - d4
