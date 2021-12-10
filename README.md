@@ -1,6 +1,10 @@
 # Beats-Bot
 CMSC421 group project
 
+## How to Run
+Run with `python3 main_driver.py`.  Evolutionary algorithm parameters
+could be edited inside this file.
+
 ## Current Ruleset mapping
 000 - c4
 001 - d4
